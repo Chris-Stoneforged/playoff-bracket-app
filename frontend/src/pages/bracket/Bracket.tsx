@@ -8,6 +8,7 @@ import {
 } from '@playoff-bracket-app/database';
 import BracketEntry from '../../components/bracketEntry/BracketEntry';
 import MakePredictionPopup from '../../components/popups/makePredictionPopup/MakePredictionPopup';
+import { ArcherContainer, ArcherElement } from 'react-archer';
 
 const defaultMatchup: MatchupData = {
   id: 0,
@@ -68,54 +69,66 @@ export default function Bracket() {
       continue;
     }
 
-    const matchups = bracketData.matchups.filter(
-      // eslint-disable-next-line no-loop-func
-      (m) => m.round === roundNum && m.left_side === left
-    );
+    const matchups = bracketData.matchups
+      .filter(
+        // eslint-disable-next-line no-loop-func
+        (m) => m.round === roundNum && m.left_side === left
+      )
+      .sort((a, b) => a.id - b.id);
     columns.push(matchups);
 
     roundNum = left ? roundNum + 1 : roundNum - 1;
   }
 
   return (
-    <div className={styles.bracketContainer}>
-      {columns.map((c) => (
-        <div className={styles.bracketColumn}>
-          {c.map((m) => (
-            <BracketEntry
-              state={m}
-              locked={bracketData.predictions_locked}
-              handleMakePredictionClicked={() => handleMakePredictionClicked(m)}
-            />
-          ))}
+    <ArcherContainer
+      strokeColor="#1e488b"
+      noCurves={true}
+      endMarker={false}
+      style={{ height: '100%' }}
+    >
+      <div className={styles.bracketContainer}>
+        {columns.map((c) => (
+          <div className={styles.bracketColumn}>
+            {c.map((m) => (
+              <BracketEntry
+                state={m}
+                locked={bracketData.predictions_locked}
+                rootMatchupId={rootMatchup.id}
+                handleMakePredictionClicked={() =>
+                  handleMakePredictionClicked(m)
+                }
+              />
+            ))}
+          </div>
+        ))}
+        <div className={styles.finalMatchup}>
+          <BracketEntry
+            state={rootMatchup}
+            locked={bracketData.predictions_locked}
+            rootMatchupId={rootMatchup.id}
+            handleMakePredictionClicked={() =>
+              handleMakePredictionClicked(rootMatchup)
+            }
+          ></BracketEntry>
         </div>
-      ))}
-      <div className={styles.finalMatchup}>
-        Finals
-        <BracketEntry
-          state={rootMatchup}
-          locked={bracketData.predictions_locked}
-          handleMakePredictionClicked={() =>
-            handleMakePredictionClicked(rootMatchup)
-          }
-        ></BracketEntry>
+        {isPredictionPopupOpen && (
+          <MakePredictionPopup
+            handlePopupClosed={() => setIsPredictionPopupOpen(false)}
+            handleBracketChanged={handlePredictionMade}
+            matchup={predictedMatchup}
+            matchupName={
+              predictedMatchup.id === rootMatchup.id
+                ? 'Finals'
+                : `${
+                    predictedMatchup.left_side
+                      ? bracketData.left_side_name
+                      : bracketData.right_side_name
+                  } - Round ${predictedMatchup.round}`
+            }
+          ></MakePredictionPopup>
+        )}
       </div>
-      {isPredictionPopupOpen && (
-        <MakePredictionPopup
-          handlePopupClosed={() => setIsPredictionPopupOpen(false)}
-          handleBracketChanged={handlePredictionMade}
-          matchup={predictedMatchup}
-          matchupName={
-            predictedMatchup.id === rootMatchup.id
-              ? 'Finals'
-              : `${
-                  predictedMatchup.left_side
-                    ? bracketData.left_side_name
-                    : bracketData.right_side_name
-                } - Round ${predictedMatchup.round}`
-          }
-        ></MakePredictionPopup>
-      )}
-    </div>
+    </ArcherContainer>
   );
 }
