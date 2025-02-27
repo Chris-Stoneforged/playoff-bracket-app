@@ -8,6 +8,7 @@ import Tournament from '../pages/tournament/Tournament';
 import {
   bracketLoader,
   inviteCodeLoader,
+  joinTournamentLoader,
   tournamentDetailLoader,
 } from '../utils/loaders';
 import Bracket from '../pages/bracket/Bracket';
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
                   {
                     path: '/tournament/:tournamentId/invite',
                     element: <GetInviteCodePopup />,
+                    loader: inviteCodeLoader,
                   },
                   {
                     path: '/tournament/:tournamentId/leave',
@@ -70,7 +72,7 @@ const router = createBrowserRouter([
               {
                 path: '/join/:inviteCode',
                 element: <JoinTournamentPopup />,
-                loader: inviteCodeLoader,
+                loader: joinTournamentLoader,
               },
             ],
           },

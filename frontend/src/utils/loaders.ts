@@ -1,5 +1,6 @@
-import { Params, redirect } from 'react-router-dom';
-import { getRequest } from './routes';
+import { Params } from 'react-router-dom';
+import { getRequest, postRequest } from './routes';
+import handleResponseError from './errorHandling';
 
 export async function tournamentDetailLoader({
   params,
@@ -10,14 +11,8 @@ export async function tournamentDetailLoader({
     `/api/v1/tournament/${params.tournamentId}`
   );
 
-  if (response.status === 401) {
-    return redirect('/login');
-  }
   if (response.status !== 200) {
-    throw new Response('', {
-      status: 404,
-      statusText: 'Not Found',
-    });
+    return await handleResponseError(response);
   }
 
   const data = await response.json();
@@ -34,11 +29,7 @@ export async function bracketLoader({
   );
 
   if (response.status !== 200) {
-    console.log(response);
-    throw new Response('', {
-      status: 404,
-      statusText: 'Not Found',
-    });
+    return await handleResponseError(response);
   }
 
   const data = await response.json();
@@ -51,7 +42,7 @@ export type InviteInfo = {
   bracketName: string;
 };
 
-export async function inviteCodeLoader({
+export async function joinTournamentLoader({
   params,
 }: {
   params: Params<'inviteCode'>;
@@ -68,4 +59,21 @@ export async function inviteCodeLoader({
     bracketName: responseJson.data.bracketName,
   };
   return data;
+}
+
+export async function inviteCodeLoader({
+  params,
+}: {
+  params: Params<'tournamentId'>;
+}) {
+  const response = await postRequest(
+    `/api/v1/tournament/${params.tournamentId}/generate-invite-code`
+  );
+  if (response.status !== 200) {
+    return null;
+  }
+
+  const json = await response.json();
+  const baseUrl = import.meta.env.VITE_URL;
+  return `${baseUrl}/join/${json.data}`;
 }

@@ -13,10 +13,6 @@ export default function JoinTournamentPopup() {
   const handleTournamentsChanged = useContext(tournamentContext);
   const inviteInfo: InviteInfo | null = useLoaderData() as InviteInfo | null;
 
-  const handlePopupClosed = () => {
-    navigate(-1);
-  };
-
   const handleJoinClicked = async () => {
     if (inviteInfo === null) {
       return;
@@ -30,6 +26,7 @@ export default function JoinTournamentPopup() {
     if (response.status !== 200) {
       setErrorText('Something went wrong');
       setIsLoading(false);
+      return;
     }
 
     const responseData = await response.json();
@@ -50,7 +47,7 @@ export default function JoinTournamentPopup() {
       loading={isLoading}
       disabled={isLoading}
       errorText={errorText}
-      handlePopupClosed={handlePopupClosed}
+      handlePopupClosed={() => navigate(-1)}
       handleSubmit={handleJoinClicked}
     >
       {inviteInfo === null ? (

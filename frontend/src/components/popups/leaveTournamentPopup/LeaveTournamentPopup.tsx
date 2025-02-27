@@ -15,10 +15,6 @@ export default function LeaveTournamentPopup() {
     ? Number.parseInt(tournamentId)
     : -1;
 
-  const handlePopupClosed = () => {
-    navigate(-1);
-  };
-
   const handleSubmitClicked = async () => {
     setIsLoading(true);
     const response = await postRequest(
@@ -44,7 +40,7 @@ export default function LeaveTournamentPopup() {
       errorText={errorText}
       loading={isLoading}
       submitButtonText="Leave"
-      handlePopupClosed={handlePopupClosed}
+      handlePopupClosed={() => navigate(-1)}
       handleSubmit={handleSubmitClicked}
     >
       <div className={styles.leaveText}>

@@ -18,10 +18,6 @@ export default function CreateTournamentPopup() {
     setSelectedBracket(Number.parseInt(event.target.value));
   };
 
-  const handlePopupClosed = () => {
-    navigate(-1);
-  };
-
   const handleCreateClicked = async () => {
     if (selectedBracket < 0) {
       setErrorText('Must select a bracket');
@@ -29,7 +25,14 @@ export default function CreateTournamentPopup() {
     }
 
     setIsLoading(true);
+
     const response = await postRequest('/api/v1/tournament/create');
+    if (response.status !== 200) {
+      setErrorText('Something went wrong');
+      setIsLoading(false);
+      return;
+    }
+
     const responseData = await response.json();
     handleTournamentsChanged(
       {
@@ -58,7 +61,7 @@ export default function CreateTournamentPopup() {
       loading={isLoading}
       disabled={isLoading}
       errorText={errorText}
-      handlePopupClosed={handlePopupClosed}
+      handlePopupClosed={() => navigate(-1)}
       handleSubmit={() => handleCreateClicked()}
     >
       <select

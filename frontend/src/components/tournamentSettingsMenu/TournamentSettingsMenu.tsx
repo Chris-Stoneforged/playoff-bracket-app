@@ -44,6 +44,16 @@ export default function TournamentSettingsMenu() {
     };
   }, [isSettingsMenuOpen]);
 
+  const handleInviteClicked = () => {
+    navigate(`/tournament/${currentTournamentId}/invite`);
+    setIsSettingsMenuOpen(false);
+  };
+
+  const handleLeaveClicked = () => {
+    navigate(`/tournament/${currentTournamentId}/leave`);
+    setIsSettingsMenuOpen(false);
+  };
+
   return (
     <div className={styles.buttonContainer}>
       <button
@@ -70,15 +80,13 @@ export default function TournamentSettingsMenu() {
         >
           <button
             className={styles.menuItem}
-            onClick={() =>
-              navigate(`/tournament/${currentTournamentId}/invite`)
-            }
+            onClick={() => handleInviteClicked()}
           >
             Get Invite Link
           </button>
           <button
             className={styles.menuItem}
-            onClick={() => navigate(`/tournament/${currentTournamentId}/leave`)}
+            onClick={() => handleLeaveClicked()}
           >
             Leave Tournament
           </button>
