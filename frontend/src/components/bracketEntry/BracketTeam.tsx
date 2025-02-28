@@ -21,20 +21,18 @@ export default function BracketTeam({
   const isVictorious = victoriousTeam === team;
 
   return (
-    <div className={styles.logo}>
-      <img
-        src={logos[bracketTeam]}
-        alt={bracketTeam}
-        className={`${styles.teamImage} ${
-          predictionMade
-            ? isPredicted
-              ? outcomeDecided && !isVictorious
-                ? styles.predictedWrong
-                : styles.predicted
-              : styles.notPredicted
-            : ''
-        }`}
-      ></img>
-    </div>
+    <img
+      src={logos[bracketTeam]}
+      alt={bracketTeam}
+      className={`${styles.logo} ${
+        predictionMade
+          ? isPredicted
+            ? outcomeDecided && !isVictorious
+              ? styles.predictedWrong
+              : styles.predicted
+            : styles.notPredicted
+          : ''
+      }`}
+    ></img>
   );
 }

@@ -28,7 +28,7 @@ import spurs from '../assets/teamLogos/spurs.png';
 import raptors from '../assets/teamLogos/raptors.png';
 import jazz from '../assets/teamLogos/jazz.png';
 import wizards from '../assets/teamLogos/wizards.png';
-import unknown from '../assets/unknown.png';
+import unknown from '../assets/playoffs.png';
 import { NBATeam } from '@playoff-bracket-app/database';
 
 const logos: Record<NBATeam | 'Unknown', string> = {

@@ -2,7 +2,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import Popup from '../popupTemplate/Popup';
 import styles from './GetInviteCodePopup.module.css';
 import React from 'react';
-import copy from '../../../assets/copy.png';
+import copy from '../../../assets/copy-icon.png';
 
 export default function GetInviteCodePopup() {
   const navigate = useNavigate();
