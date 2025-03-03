@@ -7,13 +7,13 @@ export default async function securityHeaders(
 ) {
   response.setHeader(
     'Content-Security-Policy',
-    `default-src 'self'; script-src 'self'; object-src 'none'; style-src 'self'; frame-ancestors 'self'; img-src 'self'`
+    `default-src 'self'; script-src 'self' 'unsafe-eval'; object-src 'none'; style-src 'self'; frame-ancestors 'self'; img-src 'self'`
   );
   response.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
   response.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
   response.setHeader(
     'Strict-Transport-Security',
-    'max-age=15552000 includeSubDomains'
+    'max-age=15552000; includeSubDomains'
   );
   response.setHeader('X-Content-Type-Options', 'nosniff');
   response.removeHeader('X-Powered-By');

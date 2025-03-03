@@ -392,7 +392,7 @@ export async function getTournamentInviteCode(
   response.status(200).json({
     success: true,
     message: 'Generated invite token',
-    data: code,
+    data: `${process.env.INVITE_URL_BASE}/join/${code}`,
   });
 }
 

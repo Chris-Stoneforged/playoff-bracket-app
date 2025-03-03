@@ -12,6 +12,7 @@ import {
   TournamentWithBracketData,
   UserData,
 } from '@playoff-bracket-app/database';
+import background from '../../assets/background.webp';
 
 export default function Tournament() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function Tournament() {
 
   return (
     <div className={styles.tournamentZone}>
+      <img alt="" src={background} className={styles.background} />
       <tournamentIdContext.Provider value={tournamentData.tournamentId}>
         <Outlet />
       </tournamentIdContext.Provider>

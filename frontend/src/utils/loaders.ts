@@ -74,6 +74,5 @@ export async function inviteCodeLoader({
   }
 
   const json = await response.json();
-  const baseUrl = import.meta.env.VITE_URL;
-  return `${baseUrl}/join/${json.data}`;
+  return json.data;
 }
