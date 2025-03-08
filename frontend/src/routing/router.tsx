@@ -5,14 +5,8 @@ import Register from '../pages/register/Register';
 import { createBrowserRouter } from 'react-router-dom';
 import Home from '../pages/home/Home';
 import Tournament from '../pages/tournament/Tournament';
-import {
-  bracketLoader,
-  inviteCodeLoader,
-  joinTournamentLoader,
-  tournamentDetailLoader,
-} from '../utils/loaders';
+import { bracketLoader, tournamentDetailLoader } from '../utils/loaders';
 import Bracket from '../pages/bracket/Bracket';
-import MakePredictionPopup from '../components/popups/makePredictionPopup/MakePredictionPopup';
 import NoneSelected from '../pages/home/NoneSelected';
 import TournamentError from '../pages/error/TournamentError';
 import CreateTournamentPopup from '../components/popups/createTournamentPopup/CreateTournamentPopup';
@@ -57,7 +51,6 @@ const router = createBrowserRouter([
                   {
                     path: '/tournament/:tournamentId/invite',
                     element: <GetInviteCodePopup />,
-                    loader: inviteCodeLoader,
                   },
                   {
                     path: '/tournament/:tournamentId/leave',
@@ -72,7 +65,6 @@ const router = createBrowserRouter([
               {
                 path: '/join/:inviteCode',
                 element: <JoinTournamentPopup />,
-                loader: joinTournamentLoader,
               },
             ],
           },

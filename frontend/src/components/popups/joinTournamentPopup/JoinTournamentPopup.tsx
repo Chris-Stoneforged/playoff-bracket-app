@@ -1,20 +1,29 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from './JoinTournamentPopup.module.css';
 import PopupWithSubmit from '../popupTemplate/PopupWithSubmit';
-import { postRequest } from '../../../utils/routes';
+import { getRequest, postRequest } from '../../../utils/routes';
 import { tournamentContext } from '../../../utils/context';
-import { useLoaderData, useNavigate } from 'react-router-dom';
-import { InviteInfo } from '../../../utils/loaders';
+import { useNavigate, useParams } from 'react-router-dom';
+import LoadingSpinner from '../../loadingSpinner/LoadingSpinner';
+
+type InviteInfo = {
+  code: string;
+  sender: string;
+  bracketName: string;
+};
 
 export default function JoinTournamentPopup() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
   const handleTournamentsChanged = useContext(tournamentContext);
-  const inviteInfo: InviteInfo | null = useLoaderData() as InviteInfo | null;
+  const [inviteInfo, setInviteInfo] = useState<InviteInfo | null | 'error'>(
+    null
+  );
+  const { inviteCode } = useParams();
 
   const handleJoinClicked = async () => {
-    if (inviteInfo === null) {
+    if (inviteInfo === 'error' || inviteInfo === null) {
       return;
     }
 
@@ -40,6 +49,25 @@ export default function JoinTournamentPopup() {
     );
   };
 
+  useEffect(() => {
+    const loadInviteInfo = async () => {
+      const response = await getRequest(`/api/v1/invite/${inviteCode}`);
+      if (response.status !== 200) {
+        return null;
+      }
+
+      const responseJson = await response.json();
+      const data: InviteInfo = {
+        code: inviteCode ?? '',
+        sender: responseJson.data.sender,
+        bracketName: responseJson.data.bracketName,
+      };
+      setInviteInfo(data);
+    };
+
+    loadInviteInfo();
+  });
+
   return (
     <PopupWithSubmit
       title="Join Tournament"
@@ -51,6 +79,10 @@ export default function JoinTournamentPopup() {
       handleSubmit={handleJoinClicked}
     >
       {inviteInfo === null ? (
+        <div className={styles.loadingContainer}>
+          <LoadingSpinner />
+        </div>
+      ) : inviteInfo === 'error' ? (
         <div className={styles.errorMessage}>
           There was an error with this invite code!
         </div>

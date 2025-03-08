@@ -11,6 +11,14 @@
   box-sizing: border-box;
 }
 
+.loadingContainer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 32px;
+  margin-top: 24px;
+}
+
 .inviteMessage {
   text-align: center;
   margin-bottom: 32px;
