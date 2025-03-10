@@ -24,6 +24,7 @@ export default function GetInviteCodePopup() {
       const cachedValue = resultCache.tryGet('invite-code') as string;
       if (cachedValue) {
         setInviteLink(cachedValue);
+        return;
       }
 
       const response = await postRequest(

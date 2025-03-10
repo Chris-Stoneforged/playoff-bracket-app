@@ -5,6 +5,7 @@ import { tournamentContext, userContext } from '../../utils/context';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { TournamentData, UserData } from '@playoff-bracket-app/database';
 import { TournamentChangeType } from '../../utils/types';
+import Loadable from '../../components/loadable/Loadable';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -42,11 +43,13 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.main}>
-      <tournamentContext.Provider value={handleTournamentChanged}>
-        <TournamentList tournaments={tournaments} />
-        <Outlet />
-      </tournamentContext.Provider>
-    </div>
+    <Loadable isLoading={user.userId < 0}>
+      <div className={styles.main}>
+        <tournamentContext.Provider value={handleTournamentChanged}>
+          <TournamentList tournaments={tournaments} />
+          <Outlet />
+        </tournamentContext.Provider>
+      </div>
+    </Loadable>
   );
 }

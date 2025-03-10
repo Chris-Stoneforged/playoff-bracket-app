@@ -5,7 +5,7 @@ import Register from '../pages/register/Register';
 import { createBrowserRouter } from 'react-router-dom';
 import Home from '../pages/home/Home';
 import Tournament from '../pages/tournament/Tournament';
-import { bracketLoader, tournamentDetailLoader } from '../utils/loaders';
+import { bracketLoader } from '../utils/loaders';
 import Bracket from '../pages/bracket/Bracket';
 import NoneSelected from '../pages/home/NoneSelected';
 import TournamentError from '../pages/error/TournamentError';
@@ -41,7 +41,6 @@ const router = createBrowserRouter([
               {
                 path: '/tournament/:tournamentId',
                 element: <Tournament />,
-                loader: tournamentDetailLoader,
                 children: [
                   {
                     path: '/tournament/:tournamentId/:userId',
