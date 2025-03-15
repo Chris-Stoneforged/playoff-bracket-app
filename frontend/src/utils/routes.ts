@@ -29,13 +29,20 @@ export const postRequest = async (
   });
 };
 
-export const getRequest = async (route: string): Promise<Response> => {
+export const getRequest = async (
+  route: string,
+  signal?: AbortSignal
+): Promise<Response> => {
   const loginCookie = getCookie('playoff-preditor-token');
-  return await fetch(route, {
+  const params: RequestInit = {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${loginCookie}`,
     },
-  });
+  };
+  if (signal) {
+    params.signal = signal;
+  }
+  return await fetch(route, params);
 };

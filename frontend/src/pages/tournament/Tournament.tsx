@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from './Tournament.module.css';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { userContext, tournamentIdContext } from '../../utils/context';
 import TournamentSettingsMenu from '../../components/tournamentSettingsMenu/TournamentSettingsMenu';
 import {
@@ -24,6 +24,8 @@ export default function Tournament() {
   const selectedMemberId: number = userId ? Number.parseInt(userId) : -1;
   const [tournamentData, setTournamentData] =
     useState<TournamentWithBracketData | null>(null);
+  const location = useLocation();
+  const abortControllerRef = useRef<AbortController>();
 
   const handleMemberClicked = (memberId: number) => {
     if (tournamentData !== null) {
@@ -32,7 +34,13 @@ export default function Tournament() {
   };
 
   useEffect(() => {
-    const loadTournament = async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    abortControllerRef.current = new AbortController();
+
+    const loadTournament = async (signal: AbortSignal) => {
       const route = `/api/v1/tournament/${tournamentId}`;
       const cachedData = resultCache.tryGet(route) as TournamentWithBracketData;
       if (cachedData) {
@@ -40,22 +48,32 @@ export default function Tournament() {
         return;
       }
 
-      const response = await getRequest(route);
+      try {
+        const response = await getRequest(route, signal);
+        if (response.status !== 200) {
+          return await handleResponseError(response);
+        }
 
-      if (response.status !== 200) {
-        return await handleResponseError(response);
+        const data = await response.json();
+        resultCache.add(route, data.data);
+        setTournamentData(data.data);
+      } catch (e) {
+        if ((e as Error).name === 'AbortError') {
+          console.log('Aborted');
+          return;
+        }
+        throw e;
       }
-
-      const data = await response.json();
-      resultCache.add(route, data.data);
-      setTournamentData(data.data);
     };
 
-    loadTournament();
-  }, [tournamentId]);
+    loadTournament(abortControllerRef.current.signal);
+
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, [location.pathname, tournamentId]);
 
   // Set user as the first member in the list
-
   let memberData: TournamentMemberData[] = [];
   if (tournamentData !== null) {
     memberData = [...tournamentData.memberData];
@@ -74,14 +92,10 @@ export default function Tournament() {
   return (
     <div className={styles.tournamentZone}>
       <img alt="" src={background} className={styles.background} />
-
+      <tournamentIdContext.Provider value={tournamentData?.tournamentId ?? -1}>
+        <Outlet />
+      </tournamentIdContext.Provider>
       <Loadable isLoading={tournamentData === null}>
-        <tournamentIdContext.Provider
-          value={tournamentData?.tournamentId ?? -1}
-        >
-          <Outlet />
-        </tournamentIdContext.Provider>
-
         <div className={styles.memberList}>
           {memberData.map((member) => (
             <button
