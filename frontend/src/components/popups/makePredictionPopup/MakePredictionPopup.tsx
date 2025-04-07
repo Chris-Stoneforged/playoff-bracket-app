@@ -57,8 +57,6 @@ export default function MakePredictionPopup({
     );
 
     if (response.status !== 200) {
-      console.log(response.statusText);
-      console.log(await response.json());
       setErrorText('Something went wrong!');
       setIsLoading(false);
       return;

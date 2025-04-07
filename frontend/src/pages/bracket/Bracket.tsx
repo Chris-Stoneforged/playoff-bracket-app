@@ -55,6 +55,39 @@ export default function Bracket() {
   const location = useLocation();
   const abortControllerRef = useRef<AbortController>();
 
+  const calculateColumns = (
+    b: BracketStateData
+  ): [MatchupStateData[][], MatchupStateData] => {
+    const c: MatchupStateData[][] = [];
+    let roundNum = 1;
+    let left = true;
+
+    const r = b.matchups.find((m) => m.id === b.root_matchup_id);
+    if (r === undefined) {
+      return [[], defaultMatchupState];
+    }
+
+    while (roundNum > 0) {
+      if (roundNum === r?.round) {
+        left = false;
+        roundNum -= 1;
+        continue;
+      }
+
+      const matchups = b.matchups
+        .filter(
+          // eslint-disable-next-line no-loop-func
+          (m) => m.round === roundNum && m.left_side === left
+        )
+        .sort((a, b) => a.id - b.id);
+      c.push(matchups);
+
+      roundNum = left ? roundNum + 1 : roundNum - 1;
+    }
+
+    return [c, r];
+  };
+
   useEffect(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -81,33 +114,7 @@ export default function Bracket() {
           resultCache.add(route, b);
         }
 
-        const c: MatchupStateData[][] = [];
-        let roundNum = 1;
-        let left = true;
-
-        const r = b.matchups.find((m) => m.id === b.root_matchup_id);
-        if (r === undefined) {
-          return;
-        }
-
-        while (roundNum > 0) {
-          if (roundNum === r?.round) {
-            left = false;
-            roundNum -= 1;
-            continue;
-          }
-
-          const matchups = b.matchups
-            .filter(
-              // eslint-disable-next-line no-loop-func
-              (m) => m.round === roundNum && m.left_side === left
-            )
-            .sort((a, b) => a.id - b.id);
-          c.push(matchups);
-
-          roundNum = left ? roundNum + 1 : roundNum - 1;
-        }
-
+        const [c, r] = calculateColumns(b);
         setColumns(c);
         setRootMatchup(r);
         setBracketData(b);
@@ -133,10 +140,11 @@ export default function Bracket() {
   };
 
   const handlePredictionMade = (bracketState: BracketStateData) => {
+    const [c, r] = calculateColumns(bracketState);
+    setColumns(c);
+    setRootMatchup(r);
     setBracketData(bracketState);
   };
-
-  console.log(bracketData.id);
 
   return (
     <ArcherContainer
