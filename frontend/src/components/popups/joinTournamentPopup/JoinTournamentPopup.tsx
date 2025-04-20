@@ -34,7 +34,6 @@ export default function JoinTournamentPopup() {
     );
     if (response.status !== 200) {
       setErrorText('Something went wrong');
-      setIsLoading(false);
       return;
     }
 
@@ -53,8 +52,7 @@ export default function JoinTournamentPopup() {
     const loadInviteInfo = async () => {
       const response = await getRequest(`/api/v1/invite/${inviteCode}`);
       if (response.status !== 200) {
-        setErrorText('Unable to join this tournament');
-        setIsLoading(false);
+        setInviteInfo(null);
         return;
       }
 
