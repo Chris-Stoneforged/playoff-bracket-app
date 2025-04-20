@@ -144,6 +144,10 @@ export default function Bracket() {
     setColumns(c);
     setRootMatchup(r);
     setBracketData(bracketState);
+
+    // Update cache so predictions are saved
+    const route = `/api/v1/tournament/${tournamentId}/bracket/${userId}`;
+    resultCache.add(route, bracketState);
   };
 
   return (

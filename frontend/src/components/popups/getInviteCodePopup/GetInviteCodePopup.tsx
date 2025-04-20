@@ -21,7 +21,9 @@ export default function GetInviteCodePopup() {
 
   useEffect(() => {
     const loadInviteLink = async () => {
-      const cachedValue = resultCache.tryGet('invite-code') as string;
+      const cachedValue = resultCache.tryGet(
+        `invite-link-${tournamentId}`
+      ) as string;
       if (cachedValue) {
         setInviteLink(cachedValue);
         return;
@@ -35,7 +37,7 @@ export default function GetInviteCodePopup() {
       }
 
       const json = await response.json();
-      resultCache.add('invite-code', json.data);
+      resultCache.add(`invite-link-${tournamentId}`, json.data);
       setInviteLink(json.data);
     };
 
