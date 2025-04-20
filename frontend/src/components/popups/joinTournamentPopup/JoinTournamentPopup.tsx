@@ -52,7 +52,7 @@ export default function JoinTournamentPopup() {
     const loadInviteInfo = async () => {
       const response = await getRequest(`/api/v1/invite/${inviteCode}`);
       if (response.status !== 200) {
-        setInviteInfo(null);
+        setInviteInfo('error');
         return;
       }
 
